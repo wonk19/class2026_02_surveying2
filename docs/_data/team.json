@@ -2,28 +2,63 @@
   "members": [
     {
       "name": "",
-      "role": "",
-      "leader": true
+      "ratings": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
     },
     {
       "name": "",
-      "role": "",
-      "leader": false
+      "ratings": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
     },
     {
       "name": "",
-      "role": "",
-      "leader": false
+      "ratings": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
     },
     {
       "name": "",
-      "role": "",
-      "leader": false
+      "ratings": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
     },
     {
       "name": "",
-      "role": "",
-      "leader": false
+      "ratings": [
+        "",
+        "",
+        "",
+        "",
+        "",
+        "",
+        ""
+      ]
     }
   ]
 }
