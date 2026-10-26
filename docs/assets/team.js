@@ -7,8 +7,8 @@ const initial = Array.from(published.rows).map(row => ({name: row.querySelector(
 const form = document.querySelector('#team-form');
 const fields = document.querySelector('#team-fields');
 const status = document.querySelector('#team-status');
-const key = 'team-ratings-v2:' + location.pathname.replace(/[^/]*$/, '');
-const valid = members => Array.isArray(members) && members.length === 5 && members.every(m => m && typeof m.name === 'string' && m.name.length <= 60 && Array.isArray(m.ratings) && m.ratings.length === 7 && m.ratings.every(r => ['', '상', '중', '하'].includes(r)));
+const key = 'team-participation-v3:' + location.pathname.replace(/[^/]*$/, '');
+const valid = members => Array.isArray(members) && members.length === 5 && members.every(m => m && typeof m.name === 'string' && m.name.length <= 60 && Array.isArray(m.ratings) && m.ratings.length === 7 && m.ratings.every(r => ['', '주도', '조력', '미참'].includes(r)));
 if (!valid(initial)) { status.textContent = '게시 데이터 형식을 확인하세요. 5명과 각 7개 평가가 필요합니다.'; form.hidden = true; return; }
 Array.from(published.rows).forEach((row,i) => { if (!initial[i].name) row.querySelector('.member-name').textContent = `팀원 ${i+1}`; });
 initial.forEach((member,i) => {
@@ -17,7 +17,7 @@ initial.forEach((member,i) => {
  const input = document.createElement('input'); input.type = 'text'; input.id = `team-name-${i}`; input.maxLength = 60; input.required = true; input.autocomplete = 'off'; input.placeholder = `팀원 ${i+1}`; input.setAttribute('aria-label', `팀원 ${i+1} 이름`); nameCell.append(input); row.append(nameCell);
  roles.forEach((role,j) => {
   const cell = document.createElement('td'); const select = document.createElement('select'); select.id = `team-rating-${i}-${j}`; select.setAttribute('aria-label', `팀원 ${i+1} ${role} 평가`);
-  ['', '상', '중', '하'].forEach(value => { const option = document.createElement('option'); option.value = value; option.textContent = value || '미평가'; select.append(option); });
+  ['', '주도', '조력', '미참'].forEach(value => { const option = document.createElement('option'); option.value = value; option.textContent = value || '미평가'; select.append(option); });
   cell.append(select); row.append(cell);
  }); fields.append(row);
 });
