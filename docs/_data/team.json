@@ -1,8 +1,29 @@
 {
   "members": [
-    {"name": "", "role": "", "leader": true},
-    {"name": "", "role": "", "leader": false},
-    {"name": "", "role": "", "leader": false},
-    {"name": "", "role": "", "leader": false}
+    {
+      "name": "",
+      "role": "",
+      "leader": true
+    },
+    {
+      "name": "",
+      "role": "",
+      "leader": false
+    },
+    {
+      "name": "",
+      "role": "",
+      "leader": false
+    },
+    {
+      "name": "",
+      "role": "",
+      "leader": false
+    },
+    {
+      "name": "",
+      "role": "",
+      "leader": false
+    }
   ]
 }
