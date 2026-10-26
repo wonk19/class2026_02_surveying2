@@ -1,0 +1,8 @@
+.ipynb_checkpoints/
+__pycache__/
+.env
+.env.*
+credentials.json
+*service-account*.json
+docs/_site/
+_site/

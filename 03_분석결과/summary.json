@@ -1,0 +1,11 @@
+{
+  "data_type": "SYNTHETIC_NOT_LANDSAT",
+  "n": 36,
+  "pearson_r": -0.9196710806585446,
+  "slope_per_ndvi": -10.238526905182237,
+  "group_means_c": {
+    "Higher greenness": 30.12446150681498,
+    "Lower greenness": 33.85657364355297
+  },
+  "seed": 2026
+}
