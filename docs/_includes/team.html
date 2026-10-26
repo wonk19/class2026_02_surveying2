@@ -1,0 +1,28 @@
+<section id="team" class="team-panel" aria-labelledby="team-title">
+  <h2 id="team-title">팀원 및 역할</h2>
+  <p>5인 팀 · 조장이 팀원과 협의한 이름과 담당 역할을 작성합니다.</p>
+  <h3>게시된 팀 구성</h3>
+  <ol id="published-team" class="team-list">
+  {% for member in site.data.team.members %}
+    <li data-leader="{{ member.leader }}"><strong class="member-name">{{ member.name | escape }}</strong><span class="member-role">{{ member.role | escape }}</span>{% if member.leader %}<span class="leader-badge">조장</span>{% endif %}</li>
+  {% endfor %}
+  </ol>
+  <details id="team-editor" class="no-print">
+    <summary>조장용 입력 도구 열기</summary>
+    <p>입력하면 아래 미리보기에 반영됩니다. 이 도구에는 조장 인증 기능이 없으며, 공개 반영은 저장소 쓰기 권한을 가진 조장이 GitHub에서 수행합니다.</p>
+    <p><strong>브라우저 임시 저장은 이 기기에서만 유지됩니다.</strong> 다른 사람에게 보이려면 5명 입력을 완료한 후 파일을 내려받아 저장소의 <code>docs/_data/team.json</code>을 교체하고 커밋하세요. 본인 조의 저장소에서 작업하며 공개할 이름과 역할만 적습니다.</p>
+    <form id="team-form">
+      <div id="team-fields"></div>
+      <div class="team-actions">
+        <button type="button" id="team-save">이 브라우저에 임시 저장</button>
+        <button type="submit">공개 반영용 파일 다운로드</button>
+        <button type="button" id="team-reset">임시 입력 지우고 게시본 불러오기</button>
+      </div>
+    </form>
+    <p id="team-status" role="status" aria-live="polite"></p>
+    <h3>입력 미리보기 <small>아직 공개되지 않음</small></h3>
+    <ol id="team-preview" class="team-list"></ol>
+  </details>
+  <noscript>입력 도구를 사용하려면 JavaScript가 필요합니다. 저장소의 docs/_data/team.json을 직접 수정해도 됩니다.</noscript>
+</section>
+<script src="{{ '/assets/team.js' | relative_url }}" defer></script>
