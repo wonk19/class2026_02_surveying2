@@ -2,7 +2,7 @@
 
 **학생용 공개 저장소 템플릿입니다. 모든 결과 수치는 합성자료이며, 실제 부산·Landsat 관측 결과가 아닙니다.**
 
-- [웹보고서 보기](https://wonk19.github.io/gee-project-report-example/)
+- [웹보고서 보기](https://wonk19.github.io/class2026_02_surveying2/)
 - [보고서 본문 수정](docs/index.md)
 - [빈 보고서 틀](docs/report-template.md)
 - [학생 사용 안내](STUDENT_GUIDE.md)
