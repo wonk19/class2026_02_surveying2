@@ -1,6 +1,7 @@
 /* Authenticated GitHub issue ledger: no user-supplied author fields are trusted. */
 (function(root){
 'use strict';
+const GRADING_MAX=[20,20,15,15,15,15];
 const OWNER_ID=40270480, REPO='wonk19/class2026_02_surveying2';
 const str=(v,max)=>typeof v==='string'&&v.length<=max;
 function https(v){try{const u=new URL(v);return u.protocol==='https:'&&!u.username&&!u.password;}catch{return false;}}
@@ -8,7 +9,7 @@ function repoUrl(v){return !v||/^https:\/\/github\.com\/[A-Za-z0-9_.-]+\/[A-Za-z
 async function digest(v){const bytes=new TextEncoder().encode(JSON.stringify(v));const result=await crypto.subtle.digest('SHA-256',bytes);return Array.from(new Uint8Array(result),x=>x.toString(16).padStart(2,'0')).join('');}
 function decode(issue){if(issue.pull_request||!issue.user||!Number.isSafeInteger(issue.user.id))return null;const m=/<!-- survey2-action-v2\n([^]*?)\n-->/.exec(issue.body||'');if(!m)return null;try{const d=JSON.parse(m[1]);return d&&typeof d==='object'&&!Array.isArray(d)?d:null;}catch{return null;}}
 async function reduce(roster,records,comments=[]){
- const teams=Object.fromEntries(roster.map(t=>[t.id,{...t,accounts:{},settings:{leader:'',report:'',repository:''},plan:null,approval:null}]));
+ const teams=Object.fromEntries(roster.map(t=>[t.id,{...t,accounts:{},settings:{leader:'',report:'',repository:''},plan:null,approval:null,grade:null}]));
  const claims={},feedback=[],results={},events=[...records].filter(i=>!i.pull_request).sort((a,b)=>a.number-b.number);
  const member=(team,id)=>Object.values(team.accounts).some(v=>v.id===id);
  const ready=team=>team.members.every(n=>team.accounts[n]);
@@ -42,6 +43,12 @@ async function reduce(roster,records,comments=[]){
    feedback.push({group:d.group,title:d.title,body:d.body,issue:issue.number,url:issue.html_url,created:issue.created_at});accept();continue;
   }
   if(!validGroup){reject('올바른 조 번호가 필요합니다.');continue;}
+  if(d.kind==='grade'){
+   if(!owner){reject('평가는 교수님(wonk19) 계정만 저장할 수 있습니다.');continue;}
+   if(!Array.isArray(d.scores)||d.scores.length!==6||!d.scores.every((v,i)=>v===null||(typeof v==='number'&&Number.isFinite(v)&&v>=0&&v<=GRADING_MAX[i]))||!str(d.note,1500)){reject('항목별 배점 범위와 평가 의견을 확인하세요.');continue;}
+   if((d.base??null)!==(t.grade?.issue??null)){reject('더 최근 평가가 있습니다. 새로고침 후 다시 저장하세요.');continue;}
+   t.grade={scores:d.scores,note:d.note,issue:issue.number,url:issue.html_url,updatedAt:issue.updated_at||issue.created_at||null};accept();continue;
+  }
   if(d.kind==='approve'){
    if(!owner||!ready(t)||!t.plan||d.proposal!==t.plan.issue||d.hash!==t.plan.hash){reject('교수님만 현재 연구계획을 확인 후 확정할 수 있습니다.');continue;}
    t.approval={issue:issue.number,proposal:d.proposal,hash:d.hash,url:issue.html_url};accept();continue;
@@ -64,5 +71,5 @@ async function reduce(roster,records,comments=[]){
  for(const post of feedback){post.replies=comments.filter(c=>Number((c.issue_url||'').split('/').pop())===post.issue&&str(c.body,10000)&&(c.user?.id===OWNER_ID||Object.values(teams).some(t=>(post.group===0||post.group===t.id)&&member(t,c.user?.id)))).map(c=>({body:c.body,login:c.user.login,url:c.html_url,id:c.id}));}
  return {teams,claims,feedback:feedback.reverse(),results};
 }
-const api={OWNER_ID,REPO,decode,digest,reduce};if(typeof module!=='undefined')module.exports=api;else root.CourseState=api;
+const api={GRADING_MAX,OWNER_ID,REPO,decode,digest,reduce};if(typeof module!=='undefined')module.exports=api;else root.CourseState=api;
 })(typeof window!=='undefined'?window:globalThis);
