@@ -20,7 +20,22 @@ function openIdentity(t){$('identity-editor').hidden=false;$('identity-heading')
  $('identity-editor').scrollIntoView({behavior:'smooth',block:'nearest'});
 }
 function openTeam(t){$('team-editor').hidden=false;$('team-edit-heading').textContent=`${t.id}조 · 조장과 링크 수정`;const f=$('team-edit-form');f.elements.group.value=t.id;f.elements.leader.replaceChildren();for(const n of ['',...t.members]){const o=text('option',n||'조장 미지정');o.value=n;f.elements.leader.append(o);}for(const k of ['leader','report','repository'])f.elements[k].value=t.settings[k]||'';$('team-edit-status').textContent=ready(t)?'확인된 해당 조원의 GitHub 계정으로 제출하세요.':'5명 계정 확인 전에는 wonk19의 관리 수정만 반영됩니다.';$('team-editor').scrollIntoView({behavior:'smooth',block:'nearest'});}
-function renderTeams(){const host=$('teams');host.replaceChildren();const table=text('table','','team-table');const h=text('tr','');for(const name of ['조','조원 · GitHub ID','Page','GitHub','관리']){const th=text('th',name);th.scope='col';h.append(th);}const head=text('thead','');head.append(h);table.append(head);const body=text('tbody','');for(const t of Object.values(state.teams)){const row=text('tr','');const g=text('th',`${t.id}조`);g.scope='row';row.append(g);const cell=text('td',''),names=text('div','','member-list');for(const name of t.members){const a=t.accounts[name],item=text('span',name,'member'+(t.settings.leader===name?' leader-member':''));if(t.settings.leader===name)item.append(text('span','조장','leader-badge'));item.append(text('small',a?` @${a.login} ✓`:' · ID 미확인',a?'verified':'missing'));names.append(item);}cell.append(names,text('div',`계정 확인 ${Object.keys(t.accounts).length}/5`,'fine'));row.append(cell);for(const [k,label] of [['report','Page ↗'],['repository','GitHub ↗']]){const c=text('td','');c.append(t.settings[k]?link(label,t.settings[k]):text('span','미등록','missing'));row.append(c);}const actions=text('td','','team-actions');actions.append(button('계정 등록·확인',()=>openIdentity(t)),button('조장·링크',()=>openTeam(t)));row.append(actions);body.append(row);}table.append(body);host.append(table);}
+function pendingClaims(t,name){return Object.values(state.claims).filter(c=>c.group===t.id&&c.member===name&&t.accounts[name]?.id!==c.userId).sort((a,b)=>b.issue-a.issue);}
+function renderTeams(){
+ const host=$('teams');host.replaceChildren();const all=Object.values(state.teams);const confirmed=all.reduce((n,t)=>n+Object.keys(t.accounts).length,0);const pending=all.reduce((n,t)=>n+t.members.filter(name=>!t.accounts[name]&&pendingClaims(t,name).length).length,0);const total=all.reduce((n,t)=>n+t.members.length,0);
+ $('identity-overview').textContent=`교수 확인 완료 ${confirmed}명 · 신청 후 확인 대기 ${pending}명 · 미신청 ${total-confirmed-pending}명. 신청 후 확인 대기는 등록 실패가 아닙니다. 교수님은 각 조의 ‘계정 등록·확인’에서 신청을 확인하세요.`;
+ const table=text('table','','team-table');const h=text('tr','');for(const name of ['조','조원 · GitHub ID','Page','GitHub','관리']){const th=text('th',name);th.scope='col';h.append(th);}const head=text('thead','');head.append(h);table.append(head);const body=text('tbody','');
+ for(const t of all){const row=text('tr',''),g=text('th',`${t.id}조`);g.scope='row';row.append(g);const cell=text('td',''),names=text('div','','member-list');let waiting=0;
+  for(const name of t.members){const account=t.accounts[name],claims=pendingClaims(t,name),item=text('span',name,'member'+(t.settings.leader===name?' leader-member':''));if(t.settings.leader===name)item.append(text('span','조장','leader-badge'));
+   if(account){item.append(text('small',` @${account.login} ✓ 확인 완료`,'verified'));if(claims.length)item.append(text('small',` · 다른 계정 신청 ${claims.length}건`,'identity-pending'));}
+   else if(claims.length){waiting++;const latest=claims[0];item.append(text('small',` @${latest.login} · 교수 확인 대기`,'identity-pending'));if(claims.length>1)item.append(text('small',` (신청 ${claims.length}건)`,'identity-pending'));}
+   else item.append(text('small',' · 미신청','missing'));names.append(item);
+  }
+  cell.append(names,text('div',`확인 완료 ${Object.keys(t.accounts).length}/5 · 확인 대기 ${waiting}명`,'fine'));row.append(cell);
+  for(const [k,label] of [['report','Page ↗'],['repository','GitHub ↗']]){const c=text('td','');c.append(t.settings[k]?link(label,t.settings[k]):text('span','미등록','missing'));row.append(c);}
+  const actions=text('td','','team-actions');actions.append(button(waiting?`계정 등록·확인 (${waiting}명 대기)`:'계정 등록·확인',()=>openIdentity(t)),button('조장·링크',()=>openTeam(t)));row.append(actions);body.append(row);
+ }table.append(body);host.append(table);
+}
 function planModifiedLabel(plan){
  if(!plan)return '최종 수정: 아직 등록되지 않음';
  const date=new Date(plan.updatedAt||'');if(Number.isNaN(date.getTime()))return '최종 수정: 시각 확인 불가';

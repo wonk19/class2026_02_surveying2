@@ -18,3 +18,5 @@ nav{flex-wrap:wrap;gap:12px 20px}.presentation-schedule{margin:24px 0 30px}.sche
 
 /* One consistent navigation area for the course pages. */
 .course-header{align-items:center;flex-wrap:wrap;gap:12px 24px}.course-header .brand{white-space:nowrap}.course-header nav{align-items:center;gap:8px 18px}.course-header nav a{white-space:nowrap;font-size:13px;text-decoration:none;padding:4px 0;border-bottom:2px solid transparent}.course-header nav a:hover{border-bottom-color:#9aafa2}.course-header nav a[aria-current="page"]{font-weight:750;border-bottom-color:#1b5142}@media(max-width:700px){.course-header{align-items:flex-start;flex-direction:column}.course-header nav{gap:5px 15px}.course-header nav a{font-size:12px}}
+
+.identity-overview{font-size:13px;padding:12px 14px;background:#eef1e7;border-left:3px solid #7c8c54;color:#354b36}.identity-pending{color:#845b16;font-weight:600}
