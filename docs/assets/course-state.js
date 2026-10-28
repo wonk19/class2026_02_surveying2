@@ -56,7 +56,7 @@ async function reduce(roster,records,comments=[]){
    if(!str(d.topic,150)||!d.topic.trim()||/[\r\n]/.test(d.topic)||!Array.isArray(d.objectives)||d.objectives.length!==3||!d.objectives.every(x=>str(x,220)&&x.trim()&&!/[\r\n]/.test(x))){reject('분석 주제와 세부 연구목적 3개를 각 한 줄로 입력하세요.');continue;}
    if((d.base??null)!==(t.plan?.issue??null)){reject('다른 조원이 먼저 수정했습니다. 새로고침 후 다시 제출하세요.');continue;}
    const content={group:d.group,topic:d.topic,objectives:d.objectives};
-   t.plan={...content,hash:await digest(content),issue:issue.number,url:issue.html_url,author:issue.user.login};t.approval=null;accept();continue;
+   t.plan={...content,hash:await digest(content),issue:issue.number,url:issue.html_url,author:issue.user.login,updatedAt:issue.updated_at||issue.created_at||null};t.approval=null;accept();continue;
   }
   reject('지원하지 않는 요청입니다.');
  }
