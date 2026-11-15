@@ -31,5 +31,3 @@ nav{flex-wrap:wrap;gap:12px 20px}.presentation-schedule{margin:24px 0 30px}.sche
 #grade-comment-dialog{width:min(560px,90vw);border:1px solid #c3d1c1;border-radius:8px;padding:24px;max-height:85vh;overflow:auto;color:#194d3a}
 #grade-comment-dialog::backdrop{background:#0006}
 #grade-comment-text{white-space:pre-wrap;overflow-wrap:anywhere}
-
-#grade-account h2{font-size:18px}#grade-account summary{cursor:pointer}#grade-account ol{font-size:13px;line-height:1.8}
