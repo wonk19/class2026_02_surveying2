@@ -12,5 +12,15 @@ let n=0;const event=(data,id=OWNER_ID)=>({number:++n,user:{id,login:'wonk19'},bo
  const stale=event({...base,base:first.number});s=await reduce(roster,[first,partial,stale]);assert.equal(s.teams[1].grade.issue,partial.number);assert.equal(s.results[stale.number].accepted,false);
  const reset=event({...base,base:partial.number,scores:Array(6).fill(null)});s=await reduce(roster,[first,partial,reset]);assert.deepEqual(s.teams[1].grade.scores,Array(6).fill(null));
  const pr={...event(base),pull_request:{}};s=await reduce(roster,[pr]);assert.equal(s.teams[1].grade,null);
+
+ const details={...base,presenters:['A','B','','','',''],comments:['근거 보완','명확함','','','','']};
+ const withDetails=event(details);s=await reduce(roster,[withDetails]);assert.deepEqual(s.teams[1].grade.presenters,details.presenters);assert.deepEqual(s.teams[1].grade.comments,details.comments);
+ const oldClient=event({...base,base:withDetails.number});s=await reduce(roster,[withDetails,oldClient]);assert.deepEqual(s.teams[1].grade.comments,details.comments);assert.deepEqual(s.teams[1].grade.presenters,details.presenters);
+ for(const change of [{presenters:['F','','','','','']},{presenters:['A']},{comments:[42,'','','','','']},{comments:['x'.repeat(1501),'','','','','']}]){
+  s=await reduce(roster,[event({...details,...change})]);assert.equal(s.teams[1].grade,null);
+ }
+ s=await reduce(roster,[event(details,123)]);assert.equal(s.teams[1].grade,null);
+ const cleared=event({...details,base:withDetails.number,presenters:Array(6).fill(''),comments:Array(6).fill('')});
+ s=await reduce(roster,[withDetails,cleared]);assert.deepEqual(s.teams[1].grade.presenters,Array(6).fill(''));
  console.log('Grade authorization, bounds, blank/zero, partial grades, stale writes and PR exclusion passed');
 })().catch(e=>{console.error(e);process.exitCode=1;});

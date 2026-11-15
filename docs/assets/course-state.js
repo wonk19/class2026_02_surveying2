@@ -60,7 +60,10 @@ async function reduce(roster,records,comments=[]){
    if(!owner){reject('평가는 교수님(wonk19) 계정만 저장할 수 있습니다.');continue;}
    if(!Array.isArray(d.scores)||d.scores.length!==6||!d.scores.every((v,i)=>v===null||(typeof v==='number'&&Number.isFinite(v)&&v>=0&&v<=GRADING_MAX[i]))||!str(d.note,1500)){reject('항목별 배점 범위와 평가 의견을 확인하세요.');continue;}
    if((d.base??null)!==(t.grade?.issue??null)){reject('더 최근 평가가 있습니다. 새로고침 후 다시 저장하세요.');continue;}
-   t.grade={scores:d.scores,note:d.note,issue:issue.number,url:issue.html_url,updatedAt:issue.updated_at||issue.created_at||null};accept();continue;
+   const presenters=d.presenters===undefined?(t.grade?.presenters??Array(6).fill('')):d.presenters;
+   const comments=d.comments===undefined?(t.grade?.comments??Array(6).fill('')):d.comments;
+   if(!Array.isArray(presenters)||presenters.length!==6||!presenters.every(v=>v===''||t.members.includes(v))||!Array.isArray(comments)||comments.length!==6||!comments.every(v=>str(v,1500))){reject('발표자는 해당 조원 중에서 선택하고 항목별 코멘트는 1500자 이내로 입력하세요.');continue;}
+   t.grade={scores:d.scores,note:d.note,presenters,comments,issue:issue.number,url:issue.html_url,updatedAt:issue.updated_at||issue.created_at||null};accept();continue;
   }
   if(d.kind==='approve'){
    if(!owner||!ready(t)||!t.plan||d.proposal!==t.plan.issue||d.hash!==t.plan.hash){reject('교수님만 현재 연구계획을 확인 후 확정할 수 있습니다.');continue;}

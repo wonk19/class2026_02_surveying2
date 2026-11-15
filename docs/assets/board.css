@@ -20,3 +20,14 @@ nav{flex-wrap:wrap;gap:12px 20px}.presentation-schedule{margin:24px 0 30px}.sche
 .course-header{align-items:center;flex-wrap:wrap;gap:12px 24px}.course-header .brand{white-space:nowrap}.course-header nav{align-items:center;gap:8px 18px}.course-header nav a{white-space:nowrap;font-size:13px;text-decoration:none;padding:4px 0;border-bottom:2px solid transparent}.course-header nav a:hover{border-bottom-color:#9aafa2}.course-header nav a[aria-current="page"]{font-weight:750;border-bottom-color:#1b5142}@media(max-width:700px){.course-header{align-items:flex-start;flex-direction:column}.course-header nav{gap:5px 15px}.course-header nav a{font-size:12px}}
 
 .identity-overview{font-size:13px;padding:12px 14px;background:#eef1e7;border-left:3px solid #7c8c54;color:#354b36}.identity-pending{color:#845b16;font-weight:600}
+
+/* Per-criterion presenters and public instructor comments. */
+.grade-presenter{display:block;font-size:11px;margin:4px 0;white-space:nowrap}
+.grade-comment-button{font-size:10px!important}
+.grade-item-editor{min-width:0;border:1px solid #c3d1c1;border-radius:6px;padding:12px}
+.grade-item-editor legend{font-size:13px;font-weight:700}
+.grade-item-editor label{display:block;margin:6px 0}
+.grade-item-editor select{width:100%}
+#grade-comment-dialog{width:min(560px,90vw);border:1px solid #c3d1c1;border-radius:8px;padding:24px;max-height:85vh;overflow:auto;color:#194d3a}
+#grade-comment-dialog::backdrop{background:#0006}
+#grade-comment-text{white-space:pre-wrap;overflow-wrap:anywhere}
