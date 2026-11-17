@@ -5,15 +5,16 @@ let roster=[],rubric=[],state=null,busy=false,valid=false,editing=null,base=null
 const el=(tag,value='',cls='')=>{const n=document.createElement(tag);n.textContent=value;if(cls)n.className=cls;return n;};
 const link=(label,url)=>{const n=el('a',label);n.href=url;n.target='_blank';n.rel='noopener noreferrer';return n;};
 const formatDate=value=>{if(!value||Number.isNaN(Date.parse(value)))return '시각 확인 불가';return new Intl.DateTimeFormat('ko-KR',{timeZone:'Asia/Seoul',year:'numeric',month:'2-digit',day:'2-digit',hour:'2-digit',minute:'2-digit',hour12:false}).format(new Date(value))+' KST';};
-function summary(scores){const count=scores.filter(v=>v!==null).length;const sum=Math.round(scores.reduce((a,v)=>a+(v??0),0)*100)/100;return count===6?`${sum} / 100`:(count?`입력합 ${sum} · ${count}/6`:'미평가');}
+function summary(scores){const count=scores.filter(v=>v!==null).length;const sum=Math.round(scores.reduce((a,v)=>a+(v??0),0)*100)/100;const assessedMax=scores.reduce((a,v,i)=>a+(v===null?0:CourseState.GRADING_MAX[i]),0);return count===6?`총점 ${sum} / 100`:(count?`현재 ${sum} / ${assessedMax}점 · ${count}/6항목 평가`:'아직 평가한 항목 없음');}
 function render(){
- const host=$('grade-table');host.replaceChildren();const table=el('table','','team-table grade-table');const cap=el('caption','8개 조 · 항목명을 누르면 평가 주안점으로 이동합니다. 모든 항목 입력 시 총점을 표시합니다.');table.append(cap);
- const head=el('thead'),tr=el('tr');for(const label of ['조',...rubric.map(x=>`${x.label} (${x.max})`),'총점 / 입력합','평가 의견','최종 수정 · 기록','교수 입력']){const th=el('th',label);th.scope='col';tr.append(th);}rubric.forEach((x,i)=>{tr.children[i+1].textContent='';const a=el('a',`${x.label} (${x.max})`);a.href=`#rubric-${i}`;tr.children[i+1].append(a);});head.append(tr);table.append(head);
+ const host=$('grade-table');host.replaceChildren();const table=el('table','','team-table grade-table');const cap=el('caption','날짜를 달리해 항목별로 평가할 수 있습니다. 미평가 항목은 0점으로 계산하지 않으며, 6항목 평가 후 총점을 표시합니다.');table.append(cap);
+ const head=el('thead'),tr=el('tr');for(const label of ['조',...rubric.map(x=>`${x.label} (${x.max})`),'평가 진행 / 현재 점수','평가 의견','최종 수정 · 기록','교수 입력']){const th=el('th',label);th.scope='col';tr.append(th);}rubric.forEach((x,i)=>{tr.children[i+1].textContent='';const a=el('a',`${x.label} (${x.max})`);a.href=`#rubric-${i}`;tr.children[i+1].append(a);});head.append(tr);table.append(head);
  const body=el('tbody');for(const t of Object.values(state.teams)){
   const row=el('tr'),th=el('th',`${t.id}조`);th.scope='row';row.append(th);const grade=t.grade,scores=grade?.scores??Array(6).fill(null);
   scores.forEach((score,i)=>{
    const cell=el('td','','score-cell');
-   cell.append(el('strong',score===null?'—':String(score)),el('small',grade?.presenters?.[i]||'발표자 미지정','grade-presenter'));
+   cell.append(el('strong',score===null?'미평가':String(score)),el('small',grade?.presenters?.[i]||'발표자 미지정','grade-presenter'));
+   const scoreButton=el('button',score===null?'점수 입력':'점수 수정','quiet');scoreButton.type='button';scoreButton.setAttribute('aria-label',`${t.id}조 ${rubric[i].label} 점수`);scoreButton.onclick=()=>open(t,`score${i}`);cell.append(scoreButton);
    const button=el('button',grade?.comments?.[i]?'코멘트 보기':'코멘트 작성','quiet grade-comment-button');
    button.type='button';button.setAttribute('aria-label',`${t.id}조 ${rubric[i].label} 코멘트`);button.onclick=()=>showComment(t,i);cell.append(button);row.append(cell);
   });
@@ -53,7 +54,7 @@ function open(t,focusName){
 }
 
 function values(){return rubric.map((_,i)=>{const v=$('grade-form').elements[`score${i}`].value;return v===''?null:Number(v);});}
-function preview(){$('grade-preview').textContent=summary(values())+' · 빈칸은 미평가로 저장합니다.';}
+function preview(){$('grade-preview').textContent=summary(values())+' · 이번에 평가할 항목만 입력하세요. 불러온 기존 점수는 유지하고, 아직 평가하지 않은 항목은 빈칸으로 두세요.';}
 let gradeIssues=new Set();
 async function records(){const out=[];for(let page=1;;page++){const response=await fetch(`https://api.github.com/repos/${CourseState.REPO}/issues?state=all&sort=created&direction=asc&per_page=100&page=${page}`,{headers:{Accept:'application/vnd.github+json'},cache:'no-store'});if(!response.ok)throw Error(`평가 조회 실패 (${response.status}). 잠시 후 다시 시도하세요.`);const data=await response.json();if(!Array.isArray(data))throw Error('올바르지 않은 GitHub 응답입니다.');out.push(...data);if(!(response.headers.get('Link')||'').includes('rel="next"'))return out;}}
 async function load(){if(busy)return;busy=true;valid=false;$('grade-refresh').disabled=true;$('grade-state').textContent='공개 평가 기록 확인 중…';try{if(!roster.length){const responses=await Promise.all([fetch('assets/board-teams.json'),fetch('assets/evaluation-rubric.json')]);if(responses.some(r=>!r.ok))throw Error('명단·평가 기준 조회 실패');[roster,rubric]=await Promise.all(responses.map(r=>r.json()));if(rubric.length!==6||rubric.some((r,i)=>r.max!==CourseState.GRADING_MAX[i]))throw Error('평가 배점 설정 불일치');}const issues=await records();gradeIssues=new Set(issues.filter(i=>CourseState.decode(i)?.kind==='grade').map(i=>i.number));state=await CourseState.reduce(roster,issues);valid=true;render();$('grade-state').textContent='평가 기록 확인 완료 · GitHub 등록 후 새로고침하세요.';}catch(error){$('grade-state').textContent=error.message+' 표시된 정보는 최신이 아닐 수 있으며 저장 요청을 중단합니다.';}finally{busy=false;$('grade-refresh').disabled=false;}}
