@@ -3,7 +3,7 @@ layout: report
 advanced: true
 title: "녹지–지표면 온도 관계의<br>환경조건 보정 및 계절별 이질성"
 subtitle: "품질 기준 민감도와 공간 블록 예측 검증을 포함한 합성자료 기반 분석"
-team: "예시 조 · 학술 보고서 작성 예시"
+team: "4조"
 period: "관측 기간 없음 · 합성자료"
 status: "합성 분석 실행 확인"
 badge: "DEMO / 실제 관측 결과 아님"
