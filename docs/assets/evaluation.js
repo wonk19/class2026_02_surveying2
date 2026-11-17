@@ -61,7 +61,16 @@ $('grade-form').oninput=()=>{preview();$('grade-request').hidden=true;};
 $('grade-comment-close').onclick=()=>$('grade-comment-dialog').close();
 $('grade-form').onsubmit=e=>{e.preventDefault();const form=e.currentTarget;if(!valid||editing===null){alert('평가 새로고침을 먼저 누르세요.');return;}if(!form.reportValidity())return;const scores=values();if(!scores.every((v,i)=>v===null||(Number.isFinite(v)&&v>=0&&v<=rubric[i].max))){alert('배점 범위 안의 점수를 입력하세요.');return;}const note=form.elements.note.value.trim();const presenters=rubric.map((_,i)=>form.elements[`presenter${i}`].value);const comments=rubric.map((_,i)=>form.elements[`comment${i}`].value.trim());const action={kind:'grade',group:editing,base,scores,note,presenters,comments};const title=`[${editing}조][교수 평가] ${summary(scores)}`;
  const body=`${editing}조 프로젝트 평가\n\n${rubric.map((r,i)=>`${r.label}: ${scores[i]===null?'미평가':scores[i]} / ${r.max} | 발표자: ${presenters[i]||'미지정'}\n코멘트: ${comments[i]||'없음'}`).join('\n')}\n${summary(scores)}\n\n평가 의견: ${note||'없음'}\n\n공개 평가입니다. wonk19 계정의 기록만 반영합니다.\n<!-- survey2-action-v2\n${JSON.stringify(action)}\n-->`;
- const url=`${BASE}/issues/new?${new URLSearchParams({title,body})}`;$('grade-request').hidden=false;$('grade-request-body').hidden=url.length<=7500;$('grade-request-body').value=body;$('grade-request-message').textContent=url.length>7500?'아직 저장되지 않았습니다. 아래 본문을 복사하여 GitHub 본문에 붙여넣고 wonk19 계정으로 Create issue를 누르세요.':'아직 저장되지 않았습니다. wonk19 계정으로 Create issue를 누른 후 평가 새로고침을 누르세요.';$('grade-request-link').href=url.length>7500?`${BASE}/issues/new?${new URLSearchParams({title})}`:url;$('grade-request').scrollIntoView({behavior:'smooth',block:'center'});
+ // Keep the full assessment out of the URL, including through GitHub login redirects.
+ $('grade-request').hidden=false;$('grade-request-body').hidden=false;$('grade-request-body').value=body;
+ $('grade-request-message').textContent='아직 저장되지 않았습니다. ① 평가 본문 복사 → ② GitHub 열기 → 본문(Description)에 붙여넣기 → wonk19 계정으로 Create issue → 이 페이지에서 평가 새로고침 순서로 진행하세요.';
+ $('grade-request-link').href=`${BASE}/issues/new?${new URLSearchParams({title})}`;
+ $('grade-request').scrollIntoView({behavior:'smooth',block:'center'});
+};
+$('grade-copy').onclick=async()=>{
+ const body=$('grade-request-body');
+ try{await navigator.clipboard.writeText(body.value);$('grade-request-message').textContent='평가 본문을 복사했습니다. GitHub를 열어 본문(Description)에 붙여넣고 Create issue를 누르세요. 아직 저장되지 않았습니다.';}
+ catch{body.focus();body.select();$('grade-request-message').textContent='자동 복사가 허용되지 않아 본문을 선택했습니다. Ctrl+C(맥: ⌘C)로 복사한 뒤 GitHub 본문에 붙여넣으세요. 아직 저장되지 않았습니다.';}
 };
 $('grade-close').onclick=()=>{$('grade-editor').hidden=true;$('grade-request').hidden=true;editing=null;};$('grade-refresh').onclick=load;load();
 })();
