@@ -31,3 +31,20 @@ nav{flex-wrap:wrap;gap:12px 20px}.presentation-schedule{margin:24px 0 30px}.sche
 #grade-comment-dialog{width:min(560px,90vw);border:1px solid #c3d1c1;border-radius:8px;padding:24px;max-height:85vh;overflow:auto;color:#194d3a}
 #grade-comment-dialog::backdrop{background:#0006}
 #grade-comment-text{white-space:pre-wrap;overflow-wrap:anywhere}
+
+/* Let the assessment use the available desktop width instead of a capped reading column. */
+.evaluation-page main,.evaluation-page .course-header{max-width:none;padding-left:clamp(16px,2vw,40px);padding-right:clamp(16px,2vw,40px)}
+.evaluation-page .grade-table{table-layout:fixed;min-width:0;width:100%}
+.evaluation-page .grade-table th,.evaluation-page .grade-table td{white-space:normal;overflow-wrap:anywhere;padding:8px 6px}
+.evaluation-page .grade-table th:first-child{width:4%}
+.evaluation-page .grade-table thead th:nth-child(n+2):nth-child(-n+7){width:8%}
+.evaluation-page .grade-table thead th:nth-child(8){width:12%}
+.evaluation-page .grade-table thead th:nth-child(9){width:12%}
+.evaluation-page .grade-table thead th:nth-child(10){width:14%}
+.evaluation-page .grade-table thead th:nth-child(11){width:10%}
+.evaluation-page .grade-table .grade-note{min-width:0;max-width:none}
+.evaluation-page .grade-table .quiet{white-space:normal;max-width:100%;padding:4px 6px}
+.evaluation-page .grade-table time{white-space:normal}
+@media(max-width:999px){.evaluation-page .grade-table{min-width:1000px}}
+@media print{.evaluation-page .grade-table{min-width:0}.evaluation-page main{padding:0}}
+.evaluation-page .grade-table th{word-break:keep-all}
