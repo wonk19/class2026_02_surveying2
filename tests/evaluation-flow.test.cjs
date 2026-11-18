@@ -13,7 +13,11 @@ const CourseState=require('../docs/assets/course-state.js');
  try{
  browser=await chromium.launch({headless:true,executablePath:process.env.CHROME_PATH||'C:/Program Files/Google/Chrome/Application/chrome.exe'});
  const page=await browser.newPage();const errors=[];page.on('pageerror',e=>errors.push(e.message));
- let apiRecords=[];await page.route('https://api.github.com/**',route=>route.fulfill({json:apiRecords}));
+ let apiRecords=[],failPrimary=false,apiCalls=0;
+ await page.route('https://api.github.com/**',route=>{apiCalls++;return route.fulfill({status:403,json:{message:'API rate limit exceeded'}});});
+ const snapshot=()=>({schema:1,repository:CourseState.REPO,generatedAt:'2026-11-18T00:00:00Z',issues:apiRecords});
+ await page.route('https://raw.githubusercontent.com/**',route=>failPrimary?route.fulfill({status:503}):route.fulfill({json:snapshot()}));
+ await page.route('**/assets/evaluation-records.json',route=>route.request().url().startsWith('http://127.')?route.fulfill({json:snapshot()}):route.fallback());
  await page.goto(`http://127.0.0.1:${server.address().port}/evaluation.html`);
  await page.getByRole('button',{name:'평가 입력',exact:true}).first().click();
  await page.locator('[name=score0]').fill('0');await page.locator('[name=score1]').fill('12.5');
@@ -42,6 +46,11 @@ const CourseState=require('../docs/assets/course-state.js');
  await page.locator('[name=score2]').fill('10');await page.getByRole('button',{name:'평가 등록 준비',exact:true}).click();
  const nextBody=await page.locator('#grade-request-body').inputValue();const next=CourseState.decode({body:nextBody,user:{id:CourseState.OWNER_ID}});assert.equal(next.base,1);assert.deepEqual(next.scores,[0,12.5,10,null,null,null]);assert.equal(next.comments[0],comment.trim());
  assert.match(await page.locator('#grade-preview').textContent(),/22.5 \/ 55점/);
+ assert.equal(apiCalls,0);
+ await page.locator('#grade-close').click();failPrimary=true;await page.locator('#grade-refresh').click();await page.waitForFunction(()=>document.querySelector('#grade-state').textContent.includes('배포 당시'));
+ assert.match(await page.locator('.grade-total').first().textContent(),/12.5/);
+ page.once('dialog',dialog=>dialog.accept());await page.getByRole('button',{name:'평가 입력',exact:true}).first().click();assert(await page.locator('#grade-editor').isHidden());
+ console.log('PASS: API 403 makes no difference to static lookup; fallback is labelled and read-only');
  console.log('PASS: progressive reload preserves previous scores/comments and blank ungraded fields');
  console.log('PASS: automatic short-body prefill, automatic long-body copy, complete Korean payload, grade round-trip, copy/fallback, invalidation; no real issue created');
  }finally{if(browser)await browser.close();await new Promise(r=>server.close(r));}

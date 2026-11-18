@@ -1,0 +1,40 @@
+name: Update public assessment data
+on:
+  issues:
+    types: [opened, edited, deleted, closed, reopened]
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - '01_공통코드/export-evaluation-records.cjs'
+      - 'docs/assets/course-state.js'
+      - '.github/workflows/evaluation-records.yml'
+permissions:
+  contents: write
+  issues: read
+concurrency:
+  group: evaluation-records
+  cancel-in-progress: false
+jobs:
+  export:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          ref: main
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+      - name: Export assessment records
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+        run: node 01_공통코드/export-evaluation-records.cjs
+      - name: Publish data file
+        run: |
+          git add docs/assets/evaluation-records.json
+          if git diff --cached --quiet; then exit 0; fi
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git commit -m 'Update public assessment records'
+          git pull --rebase origin main
+          git push origin HEAD:main

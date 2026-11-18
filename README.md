@@ -62,3 +62,8 @@ GEE 시작 노트북은 Landsat 8 장면의 LST 지도를 만드는 별도 연�
 
 
 - [섹션별 작성 지침](05_보고서양식/섹션별_작성지침.md): 8개 섹션의 역할·작성 항목·예문·구분 기준.
+
+## 평가 데이터 조회와 자동 갱신
+평가 페이지는 공개 JSON(`docs/assets/evaluation-records.json`)을 읽으며 방문자의 GitHub API 조회 한도를 사용하지 않는다. 공개 평가 Issue가 등록·수정·삭제되면 `.github/workflows/evaluation-records.yml`이 전체 기록을 다시 읽어 파일을 갱신한다. 각 데이터의 작성자 검증·충돌 검사는 기존 CourseState 로직을 유지한다.
+
+주 조회 경로는 main 브랜치의 raw.githubusercontent.com 공개 파일이다. Actions의 GITHUB_TOKEN 커밋은 Pages 재빌드를 유발하지 않으므로, 사이트 배포본은 연결 장애 시 읽기 전용 대체 자료로만 사용한다. 새 평가 반영에는 자동화와 캐시 갱신 시간이 필요하며 화면에 자료 갱신 시각을 표시한다. 실패 시 이전 파일을 보존하고 Actions의 Update public assessment data 실행을 확인한다. 수동 재실행은 workflow_dispatch로 가능하다. 토큰은 Actions 내부에서만 사용하며 브라우저·JSON에 저장하지 않는다.
