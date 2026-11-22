@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "repository": "wonk19/class2026_02_surveying2",
-  "generatedAt": "2026-11-22T13:07:21.472Z",
+  "generatedAt": "2026-11-22T13:07:52.493Z",
   "issues": [
     {
       "number": 186,
@@ -194,6 +194,18 @@
       "html_url": "https://github.com/wonk19/class2026_02_surveying2/issues/202",
       "created_at": "2026-11-22T13:07:11Z",
       "updated_at": "2026-11-22T13:07:11Z"
+    },
+    {
+      "number": 203,
+      "title": "[5조][교수 평가] 현재 22 / 40점 · 2/6항목 평가",
+      "body": "5조 프로젝트 평가\n\n연구배경: 14 / 20 | 발표자: BAE JIYOUNG\n코멘트: 참고문헌으로 기존 지식과 연결은 되어 있으나, 연구주제의 중요성과 문제 의식으로의 당위성이 부족함\n연구질문 / 세부목적: 8 / 20 | 발표자: KANG SUNGGON\n코멘트: 없음\n재료 / 방법: 미평가 / 15 | 발표자: 미지정\n코멘트: 없음\n연구결과: 미평가 / 15 | 발표자: 미지정\n코멘트: 없음\n토의 / 토론 / 해석: 미평가 / 15 | 발표자: 미지정\n코멘트: 없음\n결론: 미평가 / 15 | 발표자: 미지정\n코멘트: 없음\n현재 22 / 40점 · 2/6항목 평가\n\n평가 의견: 없음\n\n공개 평가입니다. wonk19 계정의 기록만 반영합니다.\n<!-- survey2-action-v2\n{\"kind\":\"grade\",\"group\":5,\"base\":189,\"scores\":[14,8,null,null,null,null],\"note\":\"\",\"presenters\":[\"BAE JIYOUNG\",\"KANG SUNGGON\",\"\",\"\",\"\",\"\"],\"comments\":[\"참고문헌으로 기존 지식과 연결은 되어 있으나, 연구주제의 중요성과 문제 의식으로의 당위성이 부족함\",\"\",\"\",\"\",\"\",\"\"]}\n-->",
+      "user": {
+        "id": 40270480,
+        "login": "wonk19"
+      },
+      "html_url": "https://github.com/wonk19/class2026_02_surveying2/issues/203",
+      "created_at": "2026-11-22T13:07:35Z",
+      "updated_at": "2026-11-22T13:07:35Z"
     }
   ]
 }
