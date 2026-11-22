@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "repository": "wonk19/class2026_02_surveying2",
-  "generatedAt": "2026-11-22T13:01:46.173Z",
+  "generatedAt": "2026-11-22T13:05:52.344Z",
   "issues": [
     {
       "number": 186,
@@ -158,6 +158,18 @@
       "html_url": "https://github.com/wonk19/class2026_02_surveying2/issues/199",
       "created_at": "2026-11-22T13:01:36Z",
       "updated_at": "2026-11-22T13:01:36Z"
+    },
+    {
+      "number": 200,
+      "title": "[3조][교수 평가] 현재 28 / 40점 · 2/6항목 평가",
+      "body": "3조 프로젝트 평가\n\n연구배경: 14 / 20 | 발표자: KIM JANGHOON\n코멘트: 야간광량과 NO2를 같이 봐야할 필요성과 중요성이 잘 설득이 되지 않음. 시각자료 및 참고문헌이 기입되어 있음\n연구질문 / 세부목적: 14 / 20 | 발표자: LI JONGYUN\n코멘트: 없음\n재료 / 방법: 미평가 / 15 | 발표자: 미지정\n코멘트: 없음\n연구결과: 미평가 / 15 | 발표자: 미지정\n코멘트: 없음\n토의 / 토론 / 해석: 미평가 / 15 | 발표자: 미지정\n코멘트: 없음\n결론: 미평가 / 15 | 발표자: 미지정\n코멘트: 없음\n현재 28 / 40점 · 2/6항목 평가\n\n평가 의견: 없음\n\n공개 평가입니다. wonk19 계정의 기록만 반영합니다.\n<!-- survey2-action-v2\n{\"kind\":\"grade\",\"group\":3,\"base\":191,\"scores\":[14,14,null,null,null,null],\"note\":\"\",\"presenters\":[\"KIM JANGHOON\",\"LI JONGYUN\",\"\",\"\",\"\",\"\"],\"comments\":[\"야간광량과 NO2를 같이 봐야할 필요성과 중요성이 잘 설득이 되지 않음. 시각자료 및 참고문헌이 기입되어 있음\",\"\",\"\",\"\",\"\",\"\"]}\n-->",
+      "user": {
+        "id": 40270480,
+        "login": "wonk19"
+      },
+      "html_url": "https://github.com/wonk19/class2026_02_surveying2/issues/200",
+      "created_at": "2026-11-22T13:05:43Z",
+      "updated_at": "2026-11-22T13:05:43Z"
     }
   ]
 }
