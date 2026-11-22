@@ -60,7 +60,9 @@ async function records(){
  const sources=[{url:`https://raw.githubusercontent.com/${CourseState.REPO}/main/docs/assets/evaluation-records.json`,fallback:false},{url:'assets/evaluation-records.json',fallback:true}];
  for(const source of sources){
   try{
-   const response=await fetch(source.url,{cache:'no-store'});if(!response.ok)continue;
+   // A distinct URL also bypasses shared CDN caches, which can outlive browser no-store.
+   const url=new URL(source.url,location.href);url.searchParams.set('refresh',`${Date.now()}-${Math.random().toString(36).slice(2)}`);
+   const response=await fetch(url.href,{cache:'no-store'});if(!response.ok)continue;
    const data=await response.json();
    if(data.schema!==1||data.repository!==CourseState.REPO||!Array.isArray(data.issues)||!Number.isFinite(Date.parse(data.generatedAt)))continue;
    if(data.issues.some(i=>!Number.isSafeInteger(i.number)||!Number.isSafeInteger(i.user?.id)||typeof i.body!=='string'))continue;

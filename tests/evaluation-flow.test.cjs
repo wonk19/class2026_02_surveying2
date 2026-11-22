@@ -16,8 +16,12 @@ const CourseState=require('../docs/assets/course-state.js');
  let apiRecords=[],failPrimary=false,apiCalls=0;
  await page.route('https://api.github.com/**',route=>{apiCalls++;return route.fulfill({status:403,json:{message:'API rate limit exceeded'}});});
  const snapshot=()=>({schema:1,repository:CourseState.REPO,generatedAt:'2026-11-18T00:00:00Z',issues:apiRecords});
- await page.route('https://raw.githubusercontent.com/**',route=>failPrimary?route.fulfill({status:503}):route.fulfill({json:snapshot()}));
- await page.route('**/assets/evaluation-records.json',route=>route.request().url().startsWith('http://127.')?route.fulfill({json:snapshot()}):route.fallback());
+ const requests=new Set();
+ await page.route('https://raw.githubusercontent.com/**',route=>{
+  const url=route.request().url();assert(new URL(url).searchParams.has('refresh'));assert(!requests.has(url));requests.add(url);
+  return failPrimary?route.fulfill({status:503}):route.fulfill({json:snapshot()});
+ });
+ await page.route('**/assets/evaluation-records.json*',route=>route.request().url().startsWith('http://127.')?route.fulfill({json:snapshot()}):route.fallback());
  await page.goto(`http://127.0.0.1:${server.address().port}/evaluation.html`);
  await page.getByRole('button',{name:'평가 입력',exact:true}).first().click();
  await page.locator('[name=score0]').fill('0');await page.locator('[name=score1]').fill('12.5');
