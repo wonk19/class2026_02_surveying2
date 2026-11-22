@@ -58,17 +58,20 @@ function preview(){$('grade-preview').textContent=summary(values())+' · 이번�
 let gradeIssues=new Set();
 async function records(){
  const sources=[{url:`https://raw.githubusercontent.com/${CourseState.REPO}/main/docs/assets/evaluation-records.json`,fallback:false},{url:'assets/evaluation-records.json',fallback:true}];
- for(const source of sources){
+ const snapshots=await Promise.all(sources.map(async source=>{
   try{
    // A distinct URL also bypasses shared CDN caches, which can outlive browser no-store.
    const url=new URL(source.url,location.href);url.searchParams.set('refresh',`${Date.now()}-${Math.random().toString(36).slice(2)}`);
-   const response=await fetch(url.href,{cache:'no-store'});if(!response.ok)continue;
+   const response=await fetch(url.href,{cache:'no-store'});if(!response.ok)return null;
    const data=await response.json();
-   if(data.schema!==1||data.repository!==CourseState.REPO||!Array.isArray(data.issues)||!Number.isFinite(Date.parse(data.generatedAt)))continue;
-   if(data.issues.some(i=>!Number.isSafeInteger(i.number)||!Number.isSafeInteger(i.user?.id)||typeof i.body!=='string'))continue;
+   if(data.schema!==1||data.repository!==CourseState.REPO||!Array.isArray(data.issues)||!Number.isFinite(Date.parse(data.generatedAt)))return null;
+   if(data.issues.some(i=>!Number.isSafeInteger(i.number)||!Number.isSafeInteger(i.user?.id)||typeof i.body!=='string'))return null;
    return {...data,fallback:source.fallback};
-  }catch{}
- }
+  }catch{return null;}
+ }));
+ const available=snapshots.filter(Boolean).sort((a,b)=>Date.parse(b.generatedAt)-Date.parse(a.generatedAt));
+ // Raw and Pages have independent CDN caches; never stop at the first valid but older copy.
+ if(available.length)return {...available[0],fallback:!snapshots[0]};
  throw Error('게시된 평가 데이터를 불러오지 못했습니다. 네트워크 연결을 확인한 뒤 다시 조회하세요.');
 }
 async function load(){if(busy)return;busy=true;valid=false;$('grade-refresh').disabled=true;$('grade-state').textContent='공개 평가 기록 확인 중…';try{if(!roster.length){const responses=await Promise.all([fetch('assets/board-teams.json'),fetch('assets/evaluation-rubric.json')]);if(responses.some(r=>!r.ok))throw Error('명단·평가 기준 조회 실패');[roster,rubric]=await Promise.all(responses.map(r=>r.json()));if(rubric.length!==6||rubric.some((r,i)=>r.max!==CourseState.GRADING_MAX[i]))throw Error('평가 배점 설정 불일치');}const snapshot=await records();const issues=snapshot.issues;gradeIssues=new Set(issues.filter(i=>CourseState.decode(i)?.kind==='grade').map(i=>i.number));state=await CourseState.reduce(roster,issues);valid=!snapshot.fallback;render();$('grade-state').textContent=`평가 자료 갱신: ${formatDate(snapshot.generatedAt)} · `+(snapshot.fallback?'연결 문제로 사이트 배포 당시 자료를 표시합니다. 최신 확인 전에는 입력을 중단합니다.':'GitHub 등록 후 자동 반영까지 몇 분 걸릴 수 있습니다. 반영되지 않았으면 잠시 후 평가 새로고침을 누르세요.');}catch(error){$('grade-state').textContent=error.message+' 표시된 정보는 최신이 아닐 수 있으며 저장 요청을 중단합니다.';}finally{busy=false;$('grade-refresh').disabled=false;}}
@@ -94,4 +97,6 @@ async function copyGradeBody(){
 $('grade-copy').onclick=copyGradeBody;
 $('grade-request-link').onclick=()=>{if($('grade-request-link').dataset.needsCopy==='true')void copyGradeBody();};
 $('grade-close').onclick=()=>{$('grade-editor').hidden=true;$('grade-request').hidden=true;editing=null;};$('grade-refresh').onclick=load;load();
+ window.addEventListener('focus',()=>{if(!document.hidden)void load();});
+ setInterval(()=>{if(!document.hidden)void load();},30000);
 })();
