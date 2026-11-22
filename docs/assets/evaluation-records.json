@@ -1,7 +1,7 @@
 {
   "schema": 1,
   "repository": "wonk19/class2026_02_surveying2",
-  "generatedAt": "2026-11-22T12:54:15.499Z",
+  "generatedAt": "2026-11-22T12:55:16.506Z",
   "issues": [
     {
       "number": 186,
@@ -134,6 +134,18 @@
       "html_url": "https://github.com/wonk19/class2026_02_surveying2/issues/197",
       "created_at": "2026-11-22T12:53:56Z",
       "updated_at": "2026-11-22T12:53:56Z"
+    },
+    {
+      "number": 198,
+      "title": "[1조][교수 평가] 현재 30 / 40점 · 2/6항목 평가",
+      "body": "1조 프로젝트 평가\n\n연구배경: 14 / 20 | 발표자: 정유경\n코멘트: 연구 주제에 대한 당위성이 부족함. 그림과 같은 보조자료가 뒷받침이 되어 있고 문헌을 통해 기존 지식과 연결되어 있음\n연구질문 / 세부목적: 16 / 20 | 발표자: Han JeongJin\n코멘트: 없음\n재료 / 방법: 미평가 / 15 | 발표자: 미지정\n코멘트: 없음\n연구결과: 미평가 / 15 | 발표자: 미지정\n코멘트: 없음\n토의 / 토론 / 해석: 미평가 / 15 | 발표자: 미지정\n코멘트: 없음\n결론: 미평가 / 15 | 발표자: 미지정\n코멘트: 없음\n현재 30 / 40점 · 2/6항목 평가\n\n평가 의견: 없음\n\n공개 평가입니다. wonk19 계정의 기록만 반영합니다.\n<!-- survey2-action-v2\n{\"kind\":\"grade\",\"group\":1,\"base\":188,\"scores\":[14,16,null,null,null,null],\"note\":\"\",\"presenters\":[\"정유경\",\"Han JeongJin\",\"\",\"\",\"\",\"\"],\"comments\":[\"연구 주제에 대한 당위성이 부족함. 그림과 같은 보조자료가 뒷받침이 되어 있고 문헌을 통해 기존 지식과 연결되어 있음\",\"\",\"\",\"\",\"\",\"\"]}\n-->",
+      "user": {
+        "id": 40270480,
+        "login": "wonk19"
+      },
+      "html_url": "https://github.com/wonk19/class2026_02_surveying2/issues/198",
+      "created_at": "2026-11-22T12:55:08Z",
+      "updated_at": "2026-11-22T12:55:08Z"
     }
   ]
 }
